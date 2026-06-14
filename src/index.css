@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Syne", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer utilities {
+  .glow-purple {
+    box-shadow: 0 0 50px -10px rgba(124, 92, 252, 0.15);
+  }
+  .glow-pink {
+    box-shadow: 0 0 50px -10px rgba(254, 44, 85, 0.15);
+  }
+  .glow-teal {
+    box-shadow: 0 0 50px -10px rgba(37, 244, 238, 0.15);
+  }
+}
+
+/* Custom radial background to mimic the premium visual theme */
+body {
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(124, 92, 252, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(254, 44, 85, 0.03) 0%, transparent 40%);
+  background-attachment: fixed;
+}
+

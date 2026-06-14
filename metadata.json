@@ -1,0 +1,6 @@
+{
+  "name": "TikScope",
+  "description": "AI-Powered Creator Intelligence Tool for analyzing TikTok accounts and profiles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
