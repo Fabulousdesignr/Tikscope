@@ -58,6 +58,7 @@ export default function App() {
   const [url, setUrl] = useState("");
   const [errorString, setErrorString] = useState("");
   const [loadingError, setLoadingError] = useState(false);
+  const [detailedError, setDetailedError] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
 
   // Auto clean URL paste like removing query parameters
@@ -80,6 +81,7 @@ export default function App() {
 
     setErrorString("");
     setLoadingError(false);
+    setDetailedError("");
     setView("processing");
 
     try {
@@ -90,13 +92,19 @@ export default function App() {
       });
 
       if (!res.ok) {
-        throw new Error("Analysis failed");
+        let errMsg = "Analysis failed";
+        try {
+          const errData = await res.json();
+          errMsg = errData.error || errMsg;
+        } catch (_) {}
+        throw new Error(errMsg);
       }
 
       const payload = await res.json();
       setAnalysisResult(payload);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setDetailedError(err.message || "The AI pipeline encountered a parsing timeout. Please double-check the TikTok URL format and try again.");
       setLoadingError(true);
     }
   };
@@ -105,6 +113,7 @@ export default function App() {
     setUrl("");
     setErrorString("");
     setLoadingError(false);
+    setDetailedError("");
     setAnalysisResult(null);
     setView("landing");
   };
@@ -282,6 +291,7 @@ export default function App() {
             <ProcessingScreen
               username={url.toLowerCase().split("@")[1]?.split("/")[0]?.split("?")[0] || "creator"}
               isError={loadingError}
+              errorMessage={detailedError}
               onRetry={handleStartAnalysis}
               onCancel={handleReset}
               onFinish={() => {
@@ -320,13 +330,14 @@ export default function App() {
 interface ProcessingProps {
   username: string;
   isError: boolean;
+  errorMessage?: string;
   onRetry: () => void;
   onCancel: () => void;
   onFinish: () => void;
   resultsReady: boolean;
 }
 
-function ProcessingScreen({ username, isError, onRetry, onCancel, onFinish, resultsReady }: ProcessingProps) {
+function ProcessingScreen({ username, isError, errorMessage, onRetry, onCancel, onFinish, resultsReady }: ProcessingProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
   const stepsList = [
@@ -393,7 +404,7 @@ function ProcessingScreen({ username, isError, onRetry, onCancel, onFinish, resu
         </div>
         <h3 className="text-2xl font-display font-extrabold mb-3">Analysis Failed</h3>
         <p className="text-white/40 text-sm mb-8 leading-relaxed">
-          The AI pipeline encountered a parsing timeout. Please double-check the TikTok URL format and try again.
+          {errorMessage || "The AI pipeline encountered a parsing timeout. Please double-check the TikTok URL format and try again."}
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <button

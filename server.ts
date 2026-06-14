@@ -1158,7 +1158,7 @@ Your output MUST be a strict JSON object structure:
     }
   } catch (error: any) {
     console.error("Analysis route error:", error);
-    return res.status(500).json({ error: "Failed to generate AI insights. Please try again later." });
+    return res.status(500).json({ error: error.message || error.toString() });
   }
 });
 
